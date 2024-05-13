@@ -10,6 +10,10 @@ LesteCLI.main = function()
 	Leste.verbose = flags.verbose
 	Leste.exitOnFirst = flags.exitOnFirst
 
+	for _, file in ipairs(fs.listDir()) do
+		print(file)
+	end
+
 	-------------------------------------
 	-- @todo: Get the tests folder from the command line, if none is passed, default to 'tests/'
 	-- @todo: Iterate over all files that start with 'test' (e.g.: testLeste.lua or test_leste.lua)
