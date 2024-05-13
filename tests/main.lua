@@ -1,7 +1,15 @@
-local Leste = require("src.leste")
+local Leste = require("leste.leste")
 
-Leste.it("should be a test", function()
-	print("should be a test - FUNCTION")
+Leste.it("should be true", function()
+	assert(1 == 1)
+end)
+
+Leste.it("should be false", function()
+	assert(1 == 0)
+end)
+
+Leste.it("should be true again", function()
+	assert(1 == 1)
 end)
 
 Leste.run()
