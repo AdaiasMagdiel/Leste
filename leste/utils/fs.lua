@@ -4,6 +4,32 @@ function fs.system()
 	return package.config:sub(1,1) == "\\" and "win" or "unix"
 end
 
+function fs.readFile(filepath, action)
+	action = action or io.open
+	local file = action(filepath, "r")
+
+	if file == nil then
+		error("An error occurred while trying to read file.")
+	end
+
+	local content = file:read("*a")
+	file:close()
+
+	return content
+end
+
+function fs.exec(commands)
+	local command = ""
+	if fs.system() == "win" then
+		command = commands.win
+	else
+		command = commands.unix
+	end
+
+	local content = fs.readFile(command, io.popen)
+	return content
+end
+
 function fs.sep()
 	local sep = ""
 
@@ -17,37 +43,29 @@ function fs.sep()
 end
 
 function fs.path()
-	local command = ""
+	local content = fs.exec({
+		win="cd",
+		unix="pwd"
+	})
 
-	if fs.system == "win" then
-		command = "cd"
-	else
-		command = "pwd"
-	end
-
-	local handle = io.popen(command, "r")
-
-	if handle == nil then
-		error("An error occurred while trying to get path.")
-	end
-
-	local content = handle:read("*a")
-	handle:close()
-
-	return string.gsub(content, "\n", "")
+	content = content:gsub("\n", "")
+	return content
 end
 
-function fs.readFile(filepath)
-	local file = io.open(filepath, "r")
+function fs.listDir(path)
+	path = path or fs.path()
 
-	if file == nil then
-		error("An error occurred while trying to read file.")
-	end
+	local content = fs.exec({
+		win=('dir /b "%s"'):format(path),
+		unix=('ls -a "%s"'):format(path)
+	})
 
-	local content = file:read("*a")
-	file:close()
+	local files = {}
 
-	return content
+	---------------------------------------------------
+	-- @todo: split the content in \n and trim each file to get files
+
+	return files
 end
 
 return fs
