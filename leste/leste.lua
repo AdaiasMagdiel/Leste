@@ -32,7 +32,7 @@ end
 
 --- Executes all test cases stored in Leste.tests.
 -- @function run
--- @usage --Define the tests
+-- @usage -- Define the tests
 -- Leste.it("This should be true", function()
 --     assert(1 == 1)
 -- end)
