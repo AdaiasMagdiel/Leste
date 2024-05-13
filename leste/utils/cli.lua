@@ -1,5 +1,11 @@
+--- The `cli` module provides functions for parsing command-line arguments.
+-- @module leste.utils.cli
+
 local cli = {}
 
+--- Removes flags (arguments starting with "-") from the given table of arguments.
+-- @tparam table args The table of arguments to process.
+-- @treturn table A new table containing only non-flag arguments, can be assigned to the global `arg` table.
 cli.removeFlags = function(args)
 	local items = {}
 
@@ -12,6 +18,11 @@ cli.removeFlags = function(args)
 	return items
 end
 
+--- Parses command-line arguments and returns a table containing parsed flags.
+-- @tparam boolean removeFromArg If true, removes parsed flags from the global `arg` table. Defaults to false.
+-- @treturn table A table containing parsed flags:<br>
+-- `verbose` (boolean): True if the `--verbose` or `-v` flag is present.<br>
+-- `exitOnFirst` (boolean): True if the `--exitfirst` or `-x` flag is present.
 cli.getFlags = function(removeFromArg)
 	local flags = {
 		verbose = false,
