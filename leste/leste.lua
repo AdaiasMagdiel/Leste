@@ -50,7 +50,7 @@ Leste.run = function()
 
     -- run all tests
     for _, test in ipairs(Leste.tests) do
-        local result = pcall(test.action)
+        local result, err = pcall(test.action)
 
         Leste.print(test.describe, '      |', result)
 
