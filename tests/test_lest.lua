@@ -1,40 +1,40 @@
 local Leste = require("leste.leste")
-local DummyLeste = require("tests.dummy_leste")
+local MockLeste = require("tests.mock_leste")
 
 
 Leste.it("the it method can store tests", function ()
-	local totalTests = #DummyLeste.tests
+	local totalTests = #MockLeste.tests
 
 	local testFunction = function() assert(true) end
-	DummyLeste.it("dummy test example", testFunction)
+	MockLeste.it("dummy test example", testFunction)
 
-	assert(totalTests ~= #DummyLeste.tests)
-	assert(#DummyLeste.tests == 1)
-	assert(DummyLeste.tests[1].action == testFunction)
+	assert(totalTests ~= #MockLeste.tests)
+	assert(#MockLeste.tests == 1)
+	assert(MockLeste.tests[1].action == testFunction)
 
-	DummyLeste.reset()
+	MockLeste.reset()
 end)
 
 Leste.it("the it method add the description with the test", function ()
-	local totalTests = #DummyLeste.tests
+	local totalTests = #MockLeste.tests
 
-	DummyLeste.it("a description example", function() end)
+	MockLeste.it("a description example", function() end)
 
-	assert(totalTests ~= #DummyLeste.tests)
-	assert(#DummyLeste.tests == 1)
-	assert(DummyLeste.tests[1].description == "a description example")
+	assert(totalTests ~= #MockLeste.tests)
+	assert(#MockLeste.tests == 1)
+	assert(MockLeste.tests[1].description == "a description example")
 
-	DummyLeste.reset()
+	MockLeste.reset()
 end)
 
 Leste.it("leste can update the total of assertions", function ()
-	DummyLeste.it("a", function() assert(true) end)
-	DummyLeste.it("b", function() assert(true) end)
-	DummyLeste.it("c", function() assert(true) end)
-	DummyLeste.it("d", function() assert(true) assert(true) end)
-	DummyLeste.run()
+	MockLeste.it("a", function() assert(true) end)
+	MockLeste.it("b", function() assert(true) end)
+	MockLeste.it("c", function() assert(true) end)
+	MockLeste.it("d", function() assert(true) assert(true) end)
+	MockLeste.run()
 
-	assert(DummyLeste.assertions == 5)
+	assert(MockLeste.assertions == 5)
 
-	DummyLeste.reset()
+	MockLeste.reset()
 end)
