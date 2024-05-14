@@ -62,8 +62,15 @@ function fs.listDir(path)
 
 	local files = {}
 
-	---------------------------------------------------
-	-- @todo: split the content in \n and trim each file to get files
+	for str in content:gmatch("([^\n]+)") do
+		-- function to trim string
+		-- ref: https://www.lua.org/pil/20.3.html
+		local file = (str:gsub("^%s*(.-)%s*$", "%1"))
+
+		if file ~= "." and file ~= ".." then
+			files[#files+1] = file
+		end
+	end
 
 	return files
 end
