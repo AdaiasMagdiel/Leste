@@ -34,12 +34,7 @@ end
 -- @tparam table commands A table with "win" and "unix" keys specifying the commands to execute on each OS.
 -- @treturn string The output of the executed command.
 function fs.exec(commands)
-	local command = ""
-	if fs.system() == "win" then
-		command = commands.win
-	else
-		command = commands.unix
-	end
+	local command = fs.system() == "win" and commands.win or commands.unix
 
 	local content = fs.readFile(command, io.popen)
 	return content
@@ -49,15 +44,19 @@ end
 -- @function fs.sep
 -- @treturn string The file separator character.
 function fs.sep()
-	local sep = ""
-
-	if fs.system == "win" then
-		sep = "\\"
-	else
-		sep = "/"
-	end
+	local sep = fs.system() == "win" and "\\" or "/"
 
 	return sep
+end
+
+
+--- Null device placeholder for Windows and Unix-like systems.
+-- @function fs.null
+-- @treturn string The null device location.
+function fs.null()
+        local device = fs.system() == "win" and "NUL" or "/dev/null"
+
+        return device
 end
 
 --- Gets the current working directory.
