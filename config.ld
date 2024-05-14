@@ -1,6 +1,6 @@
 project 	= "Leste"
-description = "A new Lua testing framework."
-full_description = "This project is a new Lua testing framework inspired by PestPHP and pytest."
+description = "A Powerful and User-Friendly Lua Testing Framework."
+full_description = "Leste is a comprehensive Lua testing framework heavily inspired by PestPHP and pytest, aiming to simplify and streamline your testing process."
 title = "Leste Documentation"
 dir = "docs"
 package = "leste"
