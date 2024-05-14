@@ -103,6 +103,8 @@ Here's a sample output demonstrating both successful and failing tests:
 
 Contributions are welcome Please feel free to submit pull requests or open issues for any bugs or feature requests.
 
+You can start selecting a task from the list in the [TODO.md](TODO.md) file.
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
