@@ -160,10 +160,6 @@ Leste.run = function()
 
     io.write("    Tests:    " .. resumeTestes, "\n")
     io.write("    Duration: " .. formatSeconds(totalTime), "\n")
-
-    -- reset all
-    Leste.tests = {}
-    Leste.assertions = 0
 end
 
 return Leste
