@@ -1,10 +1,17 @@
+--- A CLI interface for running tests using the Leste testing framework.
+-- @module LesteCLI
+
 local Leste = require("leste.leste")
 local fs = require("leste.utils.fs")
 local cli = require("leste.utils.cli")
 
 local LesteCLI = {}
 
+-- @field LesteCLI.program string The program command to run.
 LesteCLI.program = "lua leste/main.lua"
+
+
+-- @field LesteCLI.usage string Usage instructions for the CLI.
 LesteCLI.usage = ([[
 Usage: %s [options] [folder]
 
@@ -16,6 +23,9 @@ Options:
     -x, --exitfirst        exit on first failure, default false
 ]]):format(LesteCLI.program)
 
+
+--- Main function to run the Leste testing framework via CLI.
+-- @function LesteCLI.main
 LesteCLI.main = function()
 	local flags = cli.getFlags(true)
 	local testsFolder = "tests"
