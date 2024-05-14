@@ -31,6 +31,17 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#A_Powerful_and_User_Friendly_Lua_Testing_Framework">A Powerful and User-Friendly Lua Testing Framework </a></li>
+<li><a href="#Features">Features </a></li>
+<li><a href="#Installation">Installation </a></li>
+<li><a href="#Documentation">Documentation </a></li>
+<li><a href="#Examples">Examples </a></li>
+<li><a href="#Usage">Usage </a></li>
+<li><a href="#Contribution">Contribution </a></li>
+<li><a href="#License">License </a></li>
+</ul>
 
 
 <h2>Topics</h2>
@@ -40,7 +51,9 @@
 <h2>Modules</h2>
 <ul class="nowrap">
   <li><a href="../modules/Leste.html">Leste</a></li>
+  <li><a href="../modules/LesteCLI.html">LesteCLI</a></li>
   <li><a href="../modules/leste.utils.cli.html">leste.utils.cli</a></li>
+  <li><a href="../modules/leste.utils.fs.html">leste.utils.fs</a></li>
 </ul>
 
 </div>
@@ -48,21 +61,153 @@
 <div id="content">
 
 
-<h1>Leste - A Lua Testing Framework</h1>
+<h1>Leste</h1>
 
-<p>This project is a new Lua testing framework inspired by <a href="https://pestphp.com/">PestPHP</a>
-and <a href="https://docs.pytest.org/en/latest/">pytest</a>. Give a star to track.</p>
+<p><a name="A_Powerful_and_User_Friendly_Lua_Testing_Framework"></a></p>
+<h2>A Powerful and User-Friendly Lua Testing Framework</h2>
 
-<blockquote>
-    <p>The project is under construction and I will update this README as the project progresses.</p>
-</blockquote>
+<p>Leste is a comprehensive Lua testing framework heavily inspired by PestPHP and pytest, aiming to simplify and streamline your testing process.</p>
+
+<p>The name "Leste" playfully combines Lua ("L") and "teste" (Portuguese for "test") while coincidentally referencing the east direction ("leste" in Portuguese) – a subtle nod to Lua's Brazilian origin.</p>
+
+<p><a name="Features"></a></p>
+<h2>Features</h2>
+
+<ul>
+    <li><strong>Clear and Concise Syntax:</strong> The <code>it</code> function allows for easy definition of test cases with descriptive names.</li>
+    <li><strong>Enhanced Readability:</strong> Colored output highlights successful and failed tests, aiding in visual identification.</li>
+    <li><strong>Customizable Configuration:</strong> Control verbosity (print output) and early termination behavior (exit on first failure) using command-line options.</li>
+    <li><strong>Multiple Test File Support:</strong> Locate test files either in the default <code>tests</code> directory or within a specified folder.</li>
+</ul>
+
+<p><a name="Installation"></a></p>
+<h2>Installation</h2>
+
+<p>Currently, Leste is available through cloning the GitHub repository. In the future, it will be integrated with luarocks for a more convenient installation process.</p>
+
+<ol>
+    <li>First Clone the repository:</li>
+</ol>
+
+<p>   ```bash
+   git clone https://github.com/AdaiasMagdiel/Leste.git
+   ```</p>
+
+<p>One option is to create a <code>leste</code> or <code>leste.bat</code> file that points to
+the <code>lest/main.lua</code> script and add it to your system's PATH for easy access.</p>
+
+<p>file: <code>leste</code></p>
+
+<pre>
+#!/bin/bash
+
+lua path/to/the/lest/folder/main.lua $*
+</pre>
+
+
+<p>file: <code>leste.bat</code></p>
+
+<pre>
+@echo off
+
+lua path\to\the\lest\folder\main.lua %*
+</pre>
+
+
+<p><a name="Documentation"></a></p>
+<h2>Documentation</h2>
+
+<p>For a more detailed and comprehensive overview of Leste's usage and features, please refer to the official documentation available at <a href="https://adaiasmagdiel.github.io/Leste/">https://adaiasmagdiel.github.io/Leste/</a>.</p>
+
+<p><a name="Examples"></a></p>
+<h2>Examples</h2>
+
+<p>You can run some test examples in the <code>example-tests</code> folder:</p>
+
+
+<pre>
+lua path/to/the/lest/folder/main.lua example-tests
+</pre>
+
+
+<p>The folder contains files with assertions that will fail and assertions that will pass.</p>
+
+<p><a name="Usage"></a></p>
+<h2>Usage</h2>
+
+<ol>
+    <li><strong>Define Your Tests:</strong></li>
+</ol>
+
+<p>   Create Lua files (named with the <code>test</code> prefix) within your project's <code>tests</code> directory (or a custom folder) and use the <code>it</code> function to structure your test cases:</p>
+
+<p>   ```lua
+   -- tests/test_example.lua
+   local Leste = require("leste.leste")</p>
+
+<p>   Leste.it("This should be true", function()</p>
+
+<pre>
+<span class="global">assert</span>(<span class="number">1</span> == <span class="number">1</span>)
+</pre>
+
+<p>   end)</p>
+
+<p>   Leste.it("This should be false", function()</p>
+
+<pre>
+<span class="global">assert</span>(<span class="number">1</span> == <span class="number">2</span>) <span class="comment">-- This assertion will fail</span>
+</pre>
+
+<p>   end)
+   ```</p>
+
+<ol>
+    <li><strong>Run the Tests:</strong></li>
+</ol>
+
+<p>   Execute the following command from the terminal:</p>
+
+<p>   ```bash
+   lua leste/main.lua [folder]  # Optional: Specify a custom test folder
+   ```</p>
+
+<p>   If you omit the <code>folder</code> argument, the default <code>tests</code> directory will be searched for test files.</p>
+
+<h3>Command-Line Options</h3>
+
+<ul>
+    <li><code>-v</code>, <code>--verbose</code>: Display the output of the <a href="https://www.lua.org/manual/5.4/manual.html#pdf-print">print</a> function within tests for debugging purposes. Defaults to <code>false</code>.</li>
+    <li><code>-x</code>, <code>--exitfirst</code>: Stop running tests after the first failure occurs. Defaults to <code>false</code>.</li>
+</ul>
+
+<h3>Example Output</h3>
+
+<p>Here's a sample output demonstrating both successful and failing tests:</p>
+
+<pre><code>    ✓ All tests passed successfully (2 assertions)
+
+    Tests:      2 tests          1 passed          1 failed  (2 assertions)
+    Duration:   0.01s
+</code></pre>
+
+
+<p><a name="Contribution"></a></p>
+<h2>Contribution</h2>
+
+<p>Contributions are welcome Please feel free to submit pull requests or open issues for any bugs or feature requests.</p>
+
+<p><a name="License"></a></p>
+<h2>License</h2>
+
+<p>This project is licensed under the MIT License. See the <a href="LICENSE">LICENSE</a> file for details.</p>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
-<i style="float:right;">Last updated 2024-05-13 15:01:30 </i>
+<i style="float:right;">Last updated 2024-05-13 22:22:42 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

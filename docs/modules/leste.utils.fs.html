@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Leste Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Leste</h1>
+
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/Leste.html">Leste</a></li>
+  <li><a href="../modules/LesteCLI.html">LesteCLI</a></li>
+  <li><a href="../modules/leste.utils.cli.html">leste.utils.cli</a></li>
+  <li><strong>leste.utils.fs</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>leste.utils.fs</code></h1>
+<p>Provides file system operations such as reading files, executing commands, and listing directory contents.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#system">system ()</a></td>
+	<td class="summary">Returns the operating system type: "win" for Windows, "unix" for Unix-like systems.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#readFile">readFile (filepath, action)</a></td>
+	<td class="summary">Reads the content of a file.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#exec">exec (commands)</a></td>
+	<td class="summary">Executes a command and returns its output.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sep">sep ()</a></td>
+	<td class="summary">Returns the file separator character based on the operating system.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#path">path ()</a></td>
+	<td class="summary">Gets the current working directory.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#listDir">listDir (path)</a></td>
+	<td class="summary">Lists the contents of a directory.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "system"></a>
+    <strong>system ()</strong>
+    </dt>
+    <dd>
+    Returns the operating system type: "win" for Windows, "unix" for Unix-like systems.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The operating system type.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "readFile"></a>
+    <strong>readFile (filepath, action)</strong>
+    </dt>
+    <dd>
+    Reads the content of a file.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filepath</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         The path to the file to read.
+        </li>
+        <li><span class="parameter">action</span>
+            <span class="types"><span class="type">function</span></span>
+         Optional. The function to open the file. Defaults to <a href="https://www.lua.org/manual/5.4/manual.html#pdf-io.open">io.open</a>.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The content of the file.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "exec"></a>
+    <strong>exec (commands)</strong>
+    </dt>
+    <dd>
+    Executes a command and returns its output.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">commands</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         A table with "win" and "unix" keys specifying the commands to execute on each OS.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The output of the executed command.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "sep"></a>
+    <strong>sep ()</strong>
+    </dt>
+    <dd>
+    Returns the file separator character based on the operating system.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The file separator character.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "path"></a>
+    <strong>path ()</strong>
+    </dt>
+    <dd>
+    Gets the current working directory.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+        The current working directory.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "listDir"></a>
+    <strong>listDir (path)</strong>
+    </dt>
+    <dd>
+    Lists the contents of a directory.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         Optional. The path to the directory. Defaults to the current working directory.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+        A table of filenames in the directory.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2024-05-13 22:22:42 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
