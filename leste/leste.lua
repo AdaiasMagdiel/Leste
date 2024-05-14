@@ -140,7 +140,7 @@ Leste.run = function()
         if state.testsFailed > 0 then
             console.print(
                 "\n",
-                console.format(("%s⨯ Some tests failed"):format(state.margin), console.FG.WHITE, nil, true),
+                console.format(("%s⨯ Some tests failed"):format(state.margin), console.FG.RED, nil, true),
                 "\n\n"
             )
         else
