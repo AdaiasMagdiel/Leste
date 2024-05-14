@@ -1,6 +1,8 @@
 --- A testing framework inspired by PestPHP and pytest, designed for Lua.
 -- @module Leste
 
+local console = require("leste.utils.console")
+
 local function formatSeconds(s)
    local minutes = s // 60
    local seconds = math.floor(s % 60)
@@ -8,12 +10,13 @@ local function formatSeconds(s)
    return ("%d.%02ds"):format(minutes, seconds)
 end
 
---- Leste attributes
+------------------------------------------------------------
 -- @field assertions number Total of assertions in all tests.
 -- @field verbose boolean Whether to show or not the print output.
 -- @field exitOnFirst boolean Whether to stop running tests after the first failure.
 -- @field actualFile string Field used by CLI to store the file name to use later in output.
 -- @field stdout table A table to store the arguments passed to the print function.
+-- @field refs table A table with references to functions that will be modified.
 -- @field tests table An array of test cases, where each test case is a table with a string description and a function to execute.
 -- @table Leste
 local Leste = {
@@ -22,8 +25,47 @@ local Leste = {
     exitOnFirst = false,
     actualFile = "",
     stdout = {},
+    refs = {
+        print = print,
+        write = io.write,
+        assert = assert
+    },
     tests = {}
 }
+
+Leste.init = function()
+    -- modify the assert function to count the assertions
+    assert = function(...)
+        Leste.assertions = Leste.assertions + 1
+        Leste.refs.assert(...)
+    end
+
+    -- disable print function when is not verbose
+    -- otherwise, modify the print function to only store the arguments
+    -- Leste saves a reference to print to reset later.
+    if not Leste.verbose then
+        print = function() end
+    else
+        print = function(...)
+            Leste.stdout[#Leste.stdout+1] = {...}
+        end
+    end
+end
+
+Leste.cleanup = function()
+    -- reset print, io.write and assert functions
+    print = Leste.refs.print
+    io.write = Leste.refs.write
+    assert = Leste.refs.assert
+
+    -- Reset params
+    Leste.assertions = 0
+    Leste.verbose = false
+    Leste.exitOnFirst = false
+    Leste.actualFile = ""
+    Leste.stdout = {}
+    Leste.tests = {}
+end
 
 --- Adds a new test case to the Leste.tests array.
 -- @function it
@@ -52,114 +94,113 @@ end
 -- -- Then, call the run
 -- Leste.run()
 Leste.run = function()
-    -- disable print function when is not verbose
-    -- otherwise, modify the print function to only store the arguments
-    -- Leste saves a reference to print to use when needed.
-    if not Leste.verbose then
-        print = function() end
-    else
-        print = function(...)
-            Leste.stdout[#Leste.stdout+1] = {...}
+    Leste.init()
+
+    local console = console.new(Leste.refs.write)
+
+    local state = {
+        totalRuntime = 0,
+        testsPassed = 0,
+        testsFailed = 0,
+        margin = (" "):rep(4),
+    }
+
+    -- we calculate the time it takes to run each test
+    local function getExecutionTime(func)
+        local start = os.clock()
+        local result = pcall(func)
+        local ellapsed = os.clock() - start
+
+        return ellapsed, result
+    end
+
+    local function printOverview(result, test)
+        local description = console.format(test.description, console.FG.WHITE, nil, true)
+        local overview = ""
+        if result then
+            overview = console.format(" PASS ", console.FG.WHITE, console.BG.GREEN, true)
+        else
+            overview = console.format(" FAIL ", console.FG.WHITE, console.BG.RED, true)
         end
+
+        console.print("\n", state.margin, overview, "  ", description, "\n")
     end
 
-    -- modify the assert function to count the assertions
-    local assertTemp = assert
-    assert = function(...)
-        Leste.assertions = Leste.assertions + 1
-        assertTemp(...)
-    end
+    local function printConclusion()
+        local totalTests  = console.format(("%d tests"):format(#Leste.tests), console.FG.WHITE, nil, true)
+        local testsPassed = console.format(("%d passed"):format(state.testsPassed), console.FG.GREEN)
+        local testsFailed = console.format(("%d failed"):format(state.testsFailed), console.FG.RED, nil, true)
+        local testsAssertions = ("(%s assertions)"):format(Leste.assertions)
+        local resume =
+            totalTests .. state.margin ..
+            testsPassed .. state.margin ..
+            testsFailed .. state.margin ..
+            testsAssertions
 
-    -- run all tests
-    local totalTime = 0
-    local passed = 0
-    local failed = 0
-    local reset = "\x1b[0m"
-    local margin = (" "):rep(4)
+        if state.testsFailed > 0 then
+            console.print(
+                "\n",
+                console.format(("%s⨯ Some tests failed"):format(state.margin), console.FG.WHITE, nil, true),
+                "\n\n"
+            )
+        else
+            console.print(
+                "\n",
+                console.format(("%s✓ All tests passed successfully"):format(state.margin), console.FG.GREEN),
+                "\n\n"
+            )
+        end
+
+        console.print(state.margin, "Tests:    ", resume, "\n")
+        console.print(state.margin, "Duration: ", formatSeconds(state.totalRuntime), "\n")
+    end
 
     -- run all tests
     for _, test in ipairs(Leste.tests) do
-        -- we calculate the time it takes to run the code
-        local start = os.clock()
-        local result = pcall(test.action)
-        local ellapsed = os.clock() - start
-        totalTime = totalTime + ellapsed
+        local executionTime, result = getExecutionTime(test.action)
+        state.totalRuntime = state.totalRuntime + executionTime
 
         -- update passed and failed counter based in result value
-        passed = passed + (result and 1 or 0)
-        failed = failed + (result and 0 or 1)
+        state.testsPassed = state.testsPassed + (result and 1 or 0)
+        state.testsFailed = state.testsFailed + (result and 0 or 1)
 
         -- The code below appears to be overly complex
         -- perhaps in the future it would be more effective to break
         -- it down into smaller functions
 
-        -- we choice the format and the style of the badge
-        -- badge is the square with "pass" or "fail" message
-        local badgeText = result and " PASS " or " FAIL "
-        local badgeColor = result and "\x1b[1;37;42m" or "\x1b[1;37;41m"
-        local badgeTopDown = margin .. badgeColor .. (" "):rep(#badgeText) .. reset
-        local badgeCenter  = margin .. badgeColor .. badgeText .. reset
+        printOverview(result, test)
 
-        local description = "  " .. "\x1b[1;37m" .. test.description .. reset
-
-        io.write("\n")
-        io.write(badgeTopDown , "\n")
-        io.write(badgeCenter  , description , "\n")
-        io.write(badgeTopDown , "\n")
-
-        io.write("\n", margin .. "File: " .. test.file, "\n")
-        io.write(      margin .. "Time: " .. formatSeconds(ellapsed), "\n")
+        console.print("\n", state.margin, "File: ", test.file)
+        console.print("\n", state.margin, "Time: ", formatSeconds(executionTime), "\n\n")
 
         if Leste.verbose and #Leste.stdout > 0 then
-            io.write("\nstdout:\n")
+            console.print("stdout:", "\n")
 
             for _, item in ipairs(Leste.stdout) do
                 -- print each argument separated by a tab, like the original
                 -- print function
                 for _, arg in ipairs(item) do
-                    io.write(tostring(arg) .. "\t")
+                    console.print(tostring(arg), "\t")
                 end
 
-                -- the print function automatically adds a line break after each
-                -- of its arguments.
-                io.write('\n')
+                -- the print function automatically adds a line break.
+                console.print('\n')
             end
 
-            io.write("\n")
+            -- reset the "stdout" after priting
+            Leste.stdout = {}
+            console.print('\n')
         end
-
 
         -- exit on first error if exitOnFirst is true
         if result == false and Leste.exitOnFirst then
             break
         end
-
-        -- reset the "stdout" after each test
-        -- this means to removing all print statements
-        Leste.stdout = {}
     end
 
-    local reset = "\x1b[0m"
-    local totalTests = "\x1b[1;37m" .. #Leste.tests .. " tests" .. reset
-    local testsPassed = "\x1b[32m" .. passed .. " passed"     .. reset
-    local testsFailed = "\x1b[1;31m" .. failed .. " failed"     .. reset
-    local testsAssertions = " (" .. Leste.assertions .. " assertions)"
-    local resumeTestes =
-        totalTests  .. (" "):rep(3) ..
-        testsPassed .. (" "):rep(3) ..
-        testsFailed .. (" "):rep(3) ..
-        testsAssertions
+    printConclusion()
 
-    io.write("\n\n")
-
-    if failed > 0 then
-        io.write("    \x1b[1;31m" .. '⨯ Some tests failed' .. reset, '\n')
-    else
-        io.write("    \x1b[32m" .. '✓ All tests passed successfully' .. reset, '\n')
-    end
-
-    io.write("    Tests:    " .. resumeTestes, "\n")
-    io.write("    Duration: " .. formatSeconds(totalTime), "\n")
+    Leste.cleanup()
 end
 
 return Leste
