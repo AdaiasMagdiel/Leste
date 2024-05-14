@@ -13,6 +13,8 @@ end
 Leste.it("I should be happier, for living smiling and seeing the samba", function()
 	-- Raul Seixas, Ouro de Tolo
 
+	print("To be or not to be? That's the question.")
+
  	delay()
 	assert(randomBool())
 	assert(randomBool())
