@@ -16,3 +16,7 @@ on an idea from here.
   - afterEachTest
   - beforeAllTests
   - afterAllTests.
+
+### tests/dummy_leste.lua
+
+- Disable stdout for DummyLeste, it should only run the methods without reporting.
