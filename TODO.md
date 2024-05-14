@@ -16,3 +16,8 @@ on an idea from here.
   - afterEachTest
   - beforeAllTests
   - afterAllTests.
+
+### leste/main.lua
+
+- Add a flag to disable colors in output (--disable-color)
+  - Maybe it is necessary to make modifications to the `leste/utils/console.format` function.
