@@ -27,7 +27,7 @@ Leste.it("the it method add the description with the test", function ()
 	DummyLeste.reset()
 end)
 
-Leste.it("leste can save the total of assertions", function ()
+Leste.it("leste can update the total of assertions", function ()
 	DummyLeste.it("a", function() assert(true) end)
 	DummyLeste.it("b", function() assert(true) end)
 	DummyLeste.it("c", function() assert(true) end)
