@@ -1,9 +1,20 @@
+--- Provides file system operations such as reading files, executing commands, and listing directory contents.
+-- @module leste.utils.fs
+
 local fs = {}
 
+--- Returns the operating system type: "win" for Windows, "unix" for Unix-like systems.
+-- @function fs.system
+-- @treturn string The operating system type.
 function fs.system()
 	return package.config:sub(1,1) == "\\" and "win" or "unix"
 end
 
+--- Reads the content of a file.
+-- @function fs.readFile
+-- @tparam string filepath The path to the file to read.
+-- @tparam function action Optional. The function to open the file. Defaults to `io.open`.
+-- @treturn string The content of the file.
 function fs.readFile(filepath, action)
 	action = action or io.open
 	local file = action(filepath, "r")
@@ -18,6 +29,10 @@ function fs.readFile(filepath, action)
 	return content
 end
 
+--- Executes a command and returns its output.
+-- @function fs.exec
+-- @tparam table commands A table with "win" and "unix" keys specifying the commands to execute on each OS.
+-- @treturn string The output of the executed command.
 function fs.exec(commands)
 	local command = ""
 	if fs.system() == "win" then
@@ -30,6 +45,9 @@ function fs.exec(commands)
 	return content
 end
 
+--- Returns the file separator character based on the operating system.
+-- @function fs.sep
+-- @treturn string The file separator character.
 function fs.sep()
 	local sep = ""
 
@@ -42,6 +60,9 @@ function fs.sep()
 	return sep
 end
 
+--- Gets the current working directory.
+-- @function fs.path
+-- @treturn string The current working directory.
 function fs.path()
 	local content = fs.exec({
 		win="cd",
@@ -52,6 +73,10 @@ function fs.path()
 	return content
 end
 
+--- Lists the contents of a directory.
+-- @function fs.listDir
+-- @tparam string path Optional. The path to the directory. Defaults to the current working directory.
+-- @treturn table A table of filenames in the directory.
 function fs.listDir(path)
 	path = path or fs.path()
 
