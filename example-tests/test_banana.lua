@@ -3,7 +3,7 @@ local Leste = require("leste.leste")
 local function delay()
 	-- This serves as a delay function, simply intended to pause for a few seconds.
 	local i = 0
-	for j=1,math.random(1000000,100000000) do i = i+j end
+	for j=1,math.random(10000000,100000000) do i = i+j end
 end
 
 local function randomBool()
