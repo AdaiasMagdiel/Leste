@@ -15,4 +15,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - `console`: Functions for handling console output, formatting test results, and potentially offering color customization in the future.
     - `cli`: Functions for managing command-line arguments and options passed to the Leste CLI.
 
-[0.0.1]: https://github.com/AdaiasMagdiel/Leste/releases/tag/v0.0.1
+[0.1.0]: https://github.com/AdaiasMagdiel/Leste/releases/tag/v0.1.0
