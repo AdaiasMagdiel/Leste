@@ -24,6 +24,9 @@ The name Leste cleverly merges Lua (L) and teste (Portuguese for test), embodyin
 
 - [Features](#features)
 - [Installation](#installation)
+  + [Installing Leste with LuaRocks](#installing-leste-with-luarocks)
+    + [Ensuring Leste Accessibility](#ensuring-leste-accessibility)
+  + [Installing Leste by cloning this repository](#installing-leste-by-cloning-this-repository)
 - [Usage](#usage)
   + [Command Syntax](#command-syntax)
   + [Arguments](#arguments)
@@ -57,7 +60,30 @@ With Leste, you can streamline your testing process and ensure the reliability o
 
 ## Installation
 
-To install Leste, follow these steps:
+You can install Leste using luarocks or cloning this repository, choose the best option that fits you.
+
+### Installing Leste with LuaRocks
+
+Leste is conveniently available through LuaRocks, the Lua package manager. If you already have LuaRocks installed, you can easily install Leste with the following command:
+
+```bash
+luarocks install leste
+```
+
+This command will automatically download Leste from the LuaRocks repository and generate the `leste` script for you. This script enables you to run Leste directly from your command line.
+
+#### Ensuring Leste Accessibility
+
+To ensure you can execute Leste from any directory in your terminal, you need to add the LuaRocks bin directory to your system's PATH environment variable. This PATH variable defines the locations your system searches for executable programs.
+
+By default, LuaRocks installs command-line scripts like `leste` in a specific directory depending on your installation type:
+
+- **System-wide Installation:** `/usr/local/bin`
+- **Per-user Installation:**
+    - `~/.luarocks/bin` (on Unix-like systems)
+    - `%APPDATA%/luarocks/bin` (on Windows)
+
+### Installing Leste by cloning this repository
 
 1. Clone the repository from GitHub:
    ```bash
@@ -101,6 +127,7 @@ leste [options] [folder]
 
 ### Options
 
+- `-d, --disable-color`: Disable color for the output, print raw text. Default is `false`.
 - `-v, --verbose`: Display output of print function inside tests. Default is `false`.
 - `-x, --exitfirst`: Exit on the first failure. Default is `false`.
 
