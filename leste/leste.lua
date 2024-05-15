@@ -114,8 +114,6 @@ end
 --     assert(1 == 1)
 -- end)
 Leste.it = function(describe, test)
-    -- I prefer to handle Leste.tests as an array rather than a table to preserve
-    -- the order when verifying the Leste.exitOnFirst later.
     Leste.tests[#Leste.tests+1] = {
         file=Leste.actualFile,
         description=describe,
@@ -141,8 +139,8 @@ Leste.run = function()
         totalRuntime = 0,
         testsPassed = 0,
         testsFailed = 0,
-        margin = (" "):rep(4),
     }
+    local margin = (" "):rep(4)
 
     -- Formats seconds into a string representation of minutes and seconds.
     local function formatSeconds(s)
@@ -171,7 +169,7 @@ Leste.run = function()
             overview = console.format(" FAIL ", console.FG.WHITE, console.BG.RED, true)
         end
 
-        console.print("\n", state.margin, overview, "  ", description, "\n")
+        console.print("\n", margin, overview, "  ", description, "\n")
     end
 
     local function printConclusion()
@@ -180,43 +178,45 @@ Leste.run = function()
         local testsFailed = console.format(("%d failed"):format(state.testsFailed), console.FG.RED)
         local testsAssertions = ("(%s assertions)"):format(Leste.assertions)
         local resume =
-            totalTests .. state.margin ..
-            testsPassed .. state.margin ..
-            testsFailed .. state.margin ..
+            totalTests .. margin ..
+            testsPassed .. margin ..
+            testsFailed .. margin ..
             testsAssertions
 
         if #Leste.tests == 0 then
             console.print(
-                "\n", state.margin,
+                "\n", margin,
                 console.format("- There's no test to run", console.FG.YELLOW),
                 "\n\n"
             )
         elseif Leste.assertions == 0 then
             console.print(
-                "\n", state.margin,
+                "\n", margin,
                 console.format("- There's no assertion to verify", console.FG.YELLOW),
                 "\n\n"
             )
         elseif state.testsFailed > 0 then
             console.print(
-                "\n", state.margin,
+                "\n", margin,
                 console.format("⨯ Some tests failed", console.FG.RED),
                 "\n\n"
             )
         else
             console.print(
-                "\n", state.margin,
+                "\n", margin,
                 console.format("✓ All tests passed successfully", console.FG.GREEN),
                 "\n\n"
             )
         end
 
-        console.print(state.margin, "Tests:      ", resume, "\n")
-        console.print(state.margin, "Duration:   ", formatSeconds(state.totalRuntime), "\n")
+        console.print(margin, "Tests:      ", resume, "\n")
+        console.print(margin, "Duration:   ", formatSeconds(state.totalRuntime), "\n")
     end
 
     -- run all tests
     for _, test in ipairs(Leste.tests) do
+        Leste.beforeEach()
+
         local executionTime, result, err = getExecutionTime(test.action)
         state.totalRuntime = state.totalRuntime + executionTime
 
@@ -230,9 +230,9 @@ Leste.run = function()
 
         printOverview(test)
 
-        console.print("\n", state.margin, "File:    ", test.file)
-        console.print("\n", state.margin, "Time:    ", formatSeconds(executionTime))
-        console.print("\n", state.margin, "Asserts: ", Leste.assertionsReport, "\n")
+        console.print("\n", margin, "File:    ", test.file)
+        console.print("\n", margin, "Time:    ", formatSeconds(executionTime))
+        console.print("\n", margin, "Asserts: ", Leste.assertionsReport, "\n")
 
         -- Here go the traceback
         if #Leste.errors > 0 then
@@ -245,7 +245,7 @@ Leste.run = function()
             for _, errL in ipairs(Leste.errors) do
                 local loc = console.format(errL.file..":"..errL.line..": ", console.FG.WHITE)
 
-                console.print(state.margin, loc, errL.message, "\n")
+                console.print(margin, loc, errL.message, "\n")
             end
         end
 
@@ -292,6 +292,8 @@ Leste.run = function()
         -- Clean up errors after the test
         Leste.errors = {}
         Leste.assertionsReport = ""
+
+        Leste.afterEach()
     end
 
     printConclusion()
