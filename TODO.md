@@ -5,12 +5,6 @@ on an idea from here.
 
 ### leste/leste.lua
 
-- Change the assert function (in Leste.run):
-  - Store the assertions to verify later which ones have failed.
-  - Currently, we only know that it has failed, but not where.
-
-- Print a warning if there are no assertions.
-
 - Implement methods to run functions:
   - beforeEachTest
   - afterEachTest
@@ -19,9 +13,8 @@ on an idea from here.
 
 ### leste/main.lua
 
-- Add a flag to disable colors in output (--disable-color)
-  - Maybe it is necessary to make modifications to the `leste/utils/console.format` function.
-
 - Add option to run a specific file (or files).
   - Maybe the [folder] argument can be [folder/file] (or [folder/files...]).
   - It's necessary to work in a way to verify if the argument is a folder or file, write a new method in leste.utils.fs.
+
+- Add a flag to output help (-h, --help)
