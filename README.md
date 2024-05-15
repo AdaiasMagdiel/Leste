@@ -18,6 +18,12 @@ Just like a compass guides you in the right direction, Leste serves as a guiding
 
 The name Leste cleverly merges Lua (L) and teste (Portuguese for test), embodying the playful essence of its creation. Additionally, the word "leste" in Portuguese carries the meaning of "east". This serving as a subtle homage to Lua's Brazilian roots.
 
+<p align="center">
+    <img src="./assets/preview.png" width="600" alt="output of Leste cli">
+    <br>
+    <small>Leste can provide visually appealing error reports to streamline your workflow.</small>
+</p>
+
 ## Table of Contents
 
 - [Features](#features)
