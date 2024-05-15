@@ -221,8 +221,8 @@ Leste.run = function()
         state.totalRuntime = state.totalRuntime + executionTime
 
         -- update passed and failed counter based in result value
-        state.testsPassed = state.testsPassed + (result and 1 or 0)
-        state.testsFailed = state.testsFailed + (result and 0 or 1)
+        state.testsPassed = state.testsPassed + (#Leste.errors == 0 and 1 or 0)
+        state.testsFailed = state.testsFailed + (#Leste.errors == 0 and 0 or 1)
 
         -- The code below appears to be overly complex
         -- perhaps in the future it would be more effective to break
