@@ -8,7 +8,7 @@
 
 ---
 
-Leste is a powerful and user-friendly comprehensive Lua testing framework heavily inspired by PestPHP and pytest, aiming to simplify and streamline your testing process.
+Leste is a powerful and user-friendly Lua testing framework heavily inspired by PestPHP and pytest, aiming to simplify and streamline your testing process.
 
 Just like a compass guides you in the right direction, Leste serves as a guiding tool for your tests, ensuring that you stay on the right path to successful testing practices.
 
