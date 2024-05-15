@@ -21,3 +21,7 @@ on an idea from here.
 
 - Add a flag to disable colors in output (--disable-color)
   - Maybe it is necessary to make modifications to the `leste/utils/console.format` function.
+
+- Add option to run a specific file (or files).
+  - Maybe the [folder] argument can be [folder/file] (or [folder/files...]).
+  - It's necessary to work in a way to verify if the argument is a folder or file, write a new method in leste.utils.fs.
