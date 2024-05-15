@@ -40,6 +40,8 @@ end
 LesteMock.reset = function()
     LesteMock.tests = {}
     LesteMock.assertions = 0
+    LesteMock.beforeAll = function () end
+    LesteMock.endAll = function () end
 end
 
 return LesteMock
