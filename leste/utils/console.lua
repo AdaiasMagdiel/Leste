@@ -1,58 +1,60 @@
-local console = {}
+--- Console module for output and style.
+-- @module leste.utils.console
 
-console.new = function(print)
-	local con = {
-		write = print,
-		FG = {
-			BLACK 	= 30,
-			RED 	= 31,
-			GREEN 	= 32,
-			YELLOW 	= 33,
-			BLUE 	= 34,
-			MAGENTA = 35,
-			CYAN 	= 36,
-			WHITE 	= 37
-		},
-		BG = {
-			BLACK 	= 40,
-			RED 	= 41,
-			GREEN 	= 42,
-			YELLOW 	= 43,
-			BLUE 	= 44,
-			MAGENTA = 45,
-			CYAN 	= 46,
-			WHITE 	= 47
-		}
+------------------------------------------------------------------------------
+-- @field print function Function to print text, defaults to io.write
+-- @field FG Foreground color codes.
+-- @field BG Background color codes.
+-- @table console
+local console = {
+	print = io.write,
+	FG = {
+		BLACK 	= 30,
+		RED 	= 31,
+		GREEN 	= 32,
+		YELLOW 	= 33,
+		BLUE 	= 34,
+		MAGENTA = 35,
+		CYAN 	= 36,
+		WHITE 	= 37
+	},
+	BG = {
+		BLACK 	= 40,
+		RED 	= 41,
+		GREEN 	= 42,
+		YELLOW 	= 43,
+		BLUE 	= 44,
+		MAGENTA = 45,
+		CYAN 	= 46,
+		WHITE 	= 47
 	}
+}
 
-	function con.format(text, fg, bg, bold)
-		local style = "\x1b["
-		local sep = ""
+--- Formats text with specified foreground and background colors, and optionally bold.
+-- @tparam string text The text to format.
+-- @tparam number|nil fg The foreground color code, or nil for default.
+-- @tparam number|nil bg The background color code, or nil for default.
+-- @tparam boolean bold Whether to apply bold styling.
+-- @treturn string The formatted text.
+function console.format(text, fg, bg, bold)
+	local style = "\27["
+	local sep = ""
 
-		if bold then
-			style = style .. "1"
-		end
-
-		if fg then
-			sep = bold and ";" or ""
-			style = style .. sep .. fg
-		end
-
-		if bg then
-			sep = sep == ";" and ";" or ""
-			style = style .. sep .. bg
-		end
-
-		return style .. "m" .. text .. "\x1b[0m"
+	if bold then
+		style = style .. "1;"
 	end
 
-	function con.print(...)
-		con.write(...)
+	if fg then
+		style = style .. fg .. ";"
 	end
 
-	return con
+	if bg then
+		style = style .. sep .. bg .. ";"
+	end
+
+	style = style:gsub(";$", "")
+
+	return style .. "m" .. text .. "\27[0m"
 end
 
 return console
-
--- format(fg, bg, bold)
