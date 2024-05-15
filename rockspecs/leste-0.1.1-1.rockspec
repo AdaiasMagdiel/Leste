@@ -15,7 +15,7 @@ ensuring that you stay on the right path to successful testing practices.
    homepage = "https://github.com/AdaiasMagdiel/Leste",
    license = "MIT",
    maintainer = "Adaías Magdiel <eu@adaiasmagdiel.com>",
-   labels = {"test", }
+   labels = {"tests", "quality assurance", "test suites"}
 }
 build = {
    type = "builtin",
