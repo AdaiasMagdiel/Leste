@@ -26,6 +26,7 @@ end
 cli.getFlags = function(removeFromArg)
 	local flags = {
 		disableColor = false,
+		help = false,
 		verbose = false,
 		exitOnFirst = false,
 	}
@@ -35,9 +36,11 @@ cli.getFlags = function(removeFromArg)
 		if flag:sub(1, 2) == "--" then
 			-- compare the option or get the current state, if don't match
 			-- but flag is already true then don't change to false
-			flags.disableColor 	= flag:sub(3) == "disable-color"  or flags.disableColor
-			flags.verbose 		= flag:sub(3) == "verbose" 		  or flags.verbose
-      		flags.exitOnFirst 	= flag:sub(3) == "exitfirst" 	  or flags.exitOnFirst
+			local option = flag:sub(3)
+			flags.disableColor  = option == "disable-color"  or flags.disableColor
+			flags.help          = option == "help"           or flags.help
+			flags.verbose       = option == "verbose"        or flags.verbose
+      		flags.exitOnFirst   = option == "exitfirst"      or flags.exitOnFirst
 
 		-- short option, single -
 		elseif flag:sub(1, 1) == "-" then
@@ -49,8 +52,10 @@ cli.getFlags = function(removeFromArg)
 			while i <= #option do
 				local c = option:sub(i, i)
 
-				if c == "d" then
+				if     c == "d" then
 					flags.disableColor = true
+				elseif c == "h" then
+					flags.help = true
 				elseif c == "v" then
 					flags.verbose = true
 				elseif c == "x" then

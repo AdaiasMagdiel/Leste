@@ -8,7 +8,7 @@ local cli = require("leste.utils.cli")
 local LesteCLI = {}
 
 -- @field LesteCLI.program string The program command to run.
-LesteCLI.program = "lua leste/main.lua"
+LesteCLI.program = "leste"
 
 
 -- @field LesteCLI.usage string Usage instructions for the CLI.
@@ -16,12 +16,13 @@ LesteCLI.usage = ([[
 Usage: %s [options] [folder]
 
 Arguments:
-    folder                 folder to find tests, default is "./tests"
+    folder                 Folder to find tests, default is "./tests"
 
 Options:
-	-d, --disable-color    disable color for the output, print raw text
-    -v, --verbose          display output of print function inside tests, default false
-    -x, --exitfirst        exit on first failure, default false
+    -d, --disable-color    Disable color for the output, print raw text
+    -h, --help             Show this help message and exit.
+    -v, --verbose          Display output of print function inside tests, default false
+    -x, --exitfirst        Exit on first failure, default false
 ]]):format(LesteCLI.program)
 
 
@@ -36,6 +37,12 @@ LesteCLI.main = function()
 	Leste.disableColor 	= flags.disableColor
 	Leste.verbose 		= flags.verbose
 	Leste.exitOnFirst 	= flags.exitOnFirst
+
+	-- help mode
+	if flags.help then
+		print(LesteCLI.usage)
+		os.exit(0)
+	end
 
 	-- get the tests folder or print the usage
 	if #arg == 1 then
