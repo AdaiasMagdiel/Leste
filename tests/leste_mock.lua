@@ -7,6 +7,12 @@ local file = fs.readFile(path)
 
 local LesteMock = load(file)()
 
+-- Like the real module
+LesteMock.beforeAll = function () end
+LesteMock.afterAll = function () end
+LesteMock.beforeEach = function () end
+LesteMock.afterEach = function () end
+
 -- Similar to the assert modification in Leste.init
 LesteMock.assert = function(...)
     LesteMock.assertions = LesteMock.assertions + 1
@@ -25,10 +31,14 @@ LesteMock.run = function()
     }
 
     for _, test in ipairs(LesteMock.tests) do
+        LesteMock.beforeEach()
+
         local result = pcall(test.action)
 
         state.testsPassed = state.testsPassed + (result and 1 or 0)
         state.testsFailed = state.testsFailed + (result and 0 or 1)
+
+        LesteMock.afterEach()
     end
 
     LesteMock.afterAll()
@@ -41,7 +51,9 @@ LesteMock.reset = function()
     LesteMock.tests = {}
     LesteMock.assertions = 0
     LesteMock.beforeAll = function () end
-    LesteMock.endAll = function () end
+    LesteMock.afterAll = function () end
+    LesteMock.beforeEach = function () end
+    LesteMock.afterEach = function () end
 end
 
 return LesteMock
