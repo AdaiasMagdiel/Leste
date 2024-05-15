@@ -2,12 +2,14 @@
 -- @module leste.utils.console
 
 ------------------------------------------------------------------------------
--- @field print function Function to print text, defaults to io.write
+-- @field print function Function to print text, defaults to io.write.
+-- @field disableColor boolean Option to format or not with colors.
 -- @field FG Foreground color codes.
 -- @field BG Background color codes.
 -- @table console
 local console = {
 	print = io.write,
+	disableColor = false,
 	FG = {
 		BLACK 	= 30,
 		RED 	= 31,
@@ -37,6 +39,10 @@ local console = {
 -- @tparam boolean bold Whether to apply bold styling.
 -- @treturn string The formatted text.
 function console.format(text, fg, bg, bold)
+	if console.disableColor then
+		return text
+	end
+
 	local style = "\27["
 	local sep = ""
 

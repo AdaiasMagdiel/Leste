@@ -19,6 +19,7 @@ Arguments:
     folder                 folder to find tests, default is "./tests"
 
 Options:
+	-d, --disable-color    disable color for the output, print raw text
     -v, --verbose          display output of print function inside tests, default false
     -x, --exitfirst        exit on first failure, default false
 ]]):format(LesteCLI.program)
@@ -32,8 +33,9 @@ LesteCLI.main = function()
 	local filePrefix = "test"
 
 	-- update the Leste configs
-	Leste.verbose = flags.verbose
-	Leste.exitOnFirst = flags.exitOnFirst
+	Leste.disableColor 	= flags.disableColor
+	Leste.verbose 		= flags.verbose
+	Leste.exitOnFirst 	= flags.exitOnFirst
 
 	-- get the tests folder or print the usage
 	if #arg == 1 then

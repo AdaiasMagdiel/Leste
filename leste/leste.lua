@@ -6,6 +6,7 @@ local console = require("leste.utils.console")
 
 ------------------------------------------------------------------------------
 -- @field assertions number Total of assertions in all tests.
+-- @field disableColor boolean Whether to disable or not the colors in output.
 -- @field verbose boolean Whether to show or not the print output.
 -- @field exitOnFirst boolean Whether to stop running tests after the first failure.
 -- @field actualFile string Field used by CLI to store the file name to use later in output.
@@ -15,6 +16,7 @@ local console = require("leste.utils.console")
 -- @table Leste
 local Leste = {
     assertions = 0,
+    disableColor = false,
     verbose = false,
     exitOnFirst = false,
     actualFile = "",
@@ -38,6 +40,9 @@ Leste.afterEach = function() end
 -- Modifies the assert and print functions based on the framework's settings.
 -- @function init
 Leste.init = function()
+    -- change the console option to use or not colors in output
+    console.disableColor = Leste.disableColor
+
     -- modify the assert function to count the assertions and save a ref
     -- to the file and line who call
     assert = function(...)

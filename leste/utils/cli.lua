@@ -25,8 +25,9 @@ end
 -- `exitOnFirst` (boolean): True if the `--exitfirst` or `-x` flag is present.
 cli.getFlags = function(removeFromArg)
 	local flags = {
+		disableColor = false,
 		verbose = false,
-		exitOnFirst = false
+		exitOnFirst = false,
 	}
 
 	for _, flag in ipairs(arg) do
@@ -34,8 +35,9 @@ cli.getFlags = function(removeFromArg)
 		if flag:sub(1, 2) == "--" then
 			-- compare the option or get the current state, if don't match
 			-- but flag is already true then don't change to false
-			flags.verbose = flag:sub(3) == "verbose" or flags.verbose
-      		flags.exitOnFirst = flag:sub(3) == "exitfirst" or flags.exitOnFirst
+			flags.disableColor 	= flag:sub(3) == "disable-color"  or flags.disableColor
+			flags.verbose 		= flag:sub(3) == "verbose" 		  or flags.verbose
+      		flags.exitOnFirst 	= flag:sub(3) == "exitfirst" 	  or flags.exitOnFirst
 
 		-- short option, single -
 		elseif flag:sub(1, 1) == "-" then
@@ -47,7 +49,9 @@ cli.getFlags = function(removeFromArg)
 			while i <= #option do
 				local c = option:sub(i, i)
 
-				if c == "v" then
+				if c == "d" then
+					flags.disableColor = true
+				elseif c == "v" then
 					flags.verbose = true
 				elseif c == "x" then
 					flags.exitOnFirst = true
