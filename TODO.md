@@ -13,3 +13,9 @@ on an idea from here.
 ### leste/assertions.lua
 
 - Add more assertions methods to this module.
+
+### leste/utils/cli.lua
+
+- Refact the getFlags and getFlag.
+  - use getFlag to get command line flags and add a optional parameter to remove or not from arg
+    - Example: `local help = getFlag("h", "help", true)` args -> (short, long, remove)
