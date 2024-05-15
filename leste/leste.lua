@@ -3,14 +3,8 @@
 
 local console = require("leste.utils.console")
 
-local function formatSeconds(s)
-   local minutes = s // 60
-   local seconds = math.floor(s % 60)
 
-   return ("%d.%02ds"):format(minutes, seconds)
-end
-
-------------------------------------------------------------
+------------------------------------------------------------------------------
 -- @field assertions number Total of assertions in all tests.
 -- @field verbose boolean Whether to show or not the print output.
 -- @field exitOnFirst boolean Whether to stop running tests after the first failure.
@@ -30,14 +24,49 @@ local Leste = {
         write = io.write,
         assert = assert
     },
-    tests = {}
+    tests = {},
+    errors = {}, -- need documentation
+    assertionsReport = ""-- need documentation
 }
 
+Leste.beforeAll = function() end
+Leste.afterAll = function() end
+Leste.beforeEach = function() end
+Leste.afterEach = function() end
+
+--- Initializes the testing framework.
+-- Modifies the assert and print functions based on the framework's settings.
+-- @function init
 Leste.init = function()
-    -- modify the assert function to count the assertions
+    -- modify the assert function to count the assertions and save a ref
+    -- to the file and line who call
     assert = function(...)
         Leste.assertions = Leste.assertions + 1
-        Leste.refs.assert(...)
+
+        local info = debug.getinfo(3, "Sl")
+        if info.short_src == '[C]' then
+            info = debug.getinfo(2, "Sl")
+        end
+
+        local file = info.short_src
+        local line = info.currentline
+        local message = ({...})[2] or "Assertion failed: Expected condition to be true, but it's false."
+
+        local ok = pcall(Leste.refs.assert, ...)
+        if not ok then
+            Leste.errors[#Leste.errors+1] = {
+                file=file,
+                line=line,
+                message=message
+            }
+            Leste.assertionsReport =
+                Leste.assertionsReport ..
+                console.format('F', console.FG.RED)
+        else
+            Leste.assertionsReport =
+                Leste.assertionsReport ..
+                console.format('.', console.FG.GREEN)
+        end
     end
 
     -- disable print function when is not verbose
@@ -52,6 +81,9 @@ Leste.init = function()
     end
 end
 
+--- Resets the testing framework to its initial state.
+-- Restores original assert, print, and io.write functions.
+-- @function cleanup
 Leste.cleanup = function()
     -- reset print, io.write and assert functions
     print = Leste.refs.print
@@ -65,6 +97,8 @@ Leste.cleanup = function()
     Leste.actualFile = ""
     Leste.stdout = {}
     Leste.tests = {}
+    Leste.errors = {}
+    Leste.assertionsReport = ""
 end
 
 --- Adds a new test case to the Leste.tests array.
@@ -93,10 +127,10 @@ end
 --
 -- -- Then, call the run
 -- Leste.run()
+-- @treturn table Table with the state after all tests with these fields: totalRuntime, testsPassed and testsFailed
 Leste.run = function()
     Leste.init()
-
-    local console = console.new(Leste.refs.write)
+    Leste.beforeAll()
 
     local state = {
         totalRuntime = 0,
@@ -105,19 +139,28 @@ Leste.run = function()
         margin = (" "):rep(4),
     }
 
-    -- we calculate the time it takes to run each test
-    local function getExecutionTime(func)
-        local start = os.clock()
-        local result = pcall(func)
-        local ellapsed = os.clock() - start
+    -- Formats seconds into a string representation of minutes and seconds.
+    local function formatSeconds(s)
+        local minutes = s // 60
+        local seconds = math.floor(s % 60)
 
-        return ellapsed, result
+        return ("%d.%02ds"):format(minutes, seconds)
     end
 
-    local function printOverview(result, test)
+    -- Calculate the time to execute a function and returns the time, the function status and the err or nil
+    local function getExecutionTime(func)
+        local start = os.clock()
+        local result, err = pcall(func)
+        local ellapsed = os.clock() - start
+
+        return ellapsed, result, err
+    end
+
+    local function printOverview(test)
         local description = console.format(test.description, console.FG.WHITE, nil, true)
         local overview = ""
-        if result then
+
+        if #Leste.errors == 0 then
             overview = console.format(" PASS ", console.FG.WHITE, console.BG.GREEN, true)
         else
             overview = console.format(" FAIL ", console.FG.WHITE, console.BG.RED, true)
@@ -129,7 +172,7 @@ Leste.run = function()
     local function printConclusion()
         local totalTests  = console.format(("%d tests"):format(#Leste.tests), console.FG.WHITE, nil, true)
         local testsPassed = console.format(("%d passed"):format(state.testsPassed), console.FG.GREEN)
-        local testsFailed = console.format(("%d failed"):format(state.testsFailed), console.FG.RED, nil, true)
+        local testsFailed = console.format(("%d failed"):format(state.testsFailed), console.FG.RED)
         local testsAssertions = ("(%s assertions)"):format(Leste.assertions)
         local resume =
             totalTests .. state.margin ..
@@ -137,27 +180,39 @@ Leste.run = function()
             testsFailed .. state.margin ..
             testsAssertions
 
-        if state.testsFailed > 0 then
+        if #Leste.tests == 0 then
             console.print(
-                "\n",
-                console.format(("%s⨯ Some tests failed"):format(state.margin), console.FG.RED, nil, true),
+                "\n", state.margin,
+                console.format("- There's no test to run", console.FG.YELLOW),
+                "\n\n"
+            )
+        elseif Leste.assertions == 0 then
+            console.print(
+                "\n", state.margin,
+                console.format("- There's no assertion to verify", console.FG.YELLOW),
+                "\n\n"
+            )
+        elseif state.testsFailed > 0 then
+            console.print(
+                "\n", state.margin,
+                console.format("⨯ Some tests failed", console.FG.RED, nil, true),
                 "\n\n"
             )
         else
             console.print(
-                "\n",
-                console.format(("%s✓ All tests passed successfully"):format(state.margin), console.FG.GREEN),
+                "\n", state.margin,
+                console.format("✓ All tests passed successfully", console.FG.GREEN),
                 "\n\n"
             )
         end
 
-        console.print(state.margin, "Tests:    ", resume, "\n")
-        console.print(state.margin, "Duration: ", formatSeconds(state.totalRuntime), "\n")
+        console.print(state.margin, "Tests:      ", resume, "\n")
+        console.print(state.margin, "Duration:   ", formatSeconds(state.totalRuntime), "\n")
     end
 
     -- run all tests
     for _, test in ipairs(Leste.tests) do
-        local executionTime, result = getExecutionTime(test.action)
+        local executionTime, result, err = getExecutionTime(test.action)
         state.totalRuntime = state.totalRuntime + executionTime
 
         -- update passed and failed counter based in result value
@@ -168,13 +223,45 @@ Leste.run = function()
         -- perhaps in the future it would be more effective to break
         -- it down into smaller functions
 
-        printOverview(result, test)
+        printOverview(test)
 
-        console.print("\n", state.margin, "File: ", test.file)
-        console.print("\n", state.margin, "Time: ", formatSeconds(executionTime), "\n\n")
+        console.print("\n", state.margin, "File:    ", test.file)
+        console.print("\n", state.margin, "Time:    ", formatSeconds(executionTime))
+        console.print("\n", state.margin, "Asserts: ", Leste.assertionsReport, "\n")
 
+        -- Here go the traceback
+        if #Leste.errors > 0 then
+            console.print(
+                "\n",
+                console.format("Assertions errors:", console.FG.RED),
+                "\n"
+            )
+
+            for _, errL in ipairs(Leste.errors) do
+                local loc = console.format(errL.file..":"..errL.line..": ", console.FG.WHITE)
+
+                console.print(state.margin, loc, errL.message, "\n")
+            end
+        end
+
+        -- Other errors
+        if err then
+            console.print(
+                "\n",
+                console.format("Errors:", console.FG.RED),
+                "\n"
+            )
+
+            console.print(err, "\n")
+        end
+
+        -- emulate the print function
         if Leste.verbose and #Leste.stdout > 0 then
-            console.print("stdout:", "\n")
+            console.print(
+                "\n",
+                console.format("STDOUT:", console.FG.WHITE),
+                "\n"
+            )
 
             for _, item in ipairs(Leste.stdout) do
                 -- print each argument separated by a tab, like the original
@@ -196,11 +283,18 @@ Leste.run = function()
         if result == false and Leste.exitOnFirst then
             break
         end
+
+        -- Clean up errors after the test
+        Leste.errors = {}
+        Leste.assertionsReport = ""
     end
 
     printConclusion()
 
+    Leste.afterAll()
     Leste.cleanup()
+
+    return state
 end
 
 return Leste
