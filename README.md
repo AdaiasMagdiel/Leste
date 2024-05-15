@@ -1,12 +1,8 @@
 <p align="center">
     <img src="./assets/banner.png" width="600" alt="Leste - Your Powerfull Lua Test Framework">
     <p align="center">
-        <a href="https://www.lua.org/">
-            <img alt="Lua Language" src="https://img.shields.io/badge/Language-Lua-blue?style=flat&logo=lua&logoColor=white">
-        </a>
-        <a href="./LICENSE">
-            <img alt="Project's License" src="https://img.shields.io/badge/License-MIT-brightgreen">
-        </a>
+        <a href="https://www.lua.org/"><img alt="Lua Language" src="https://img.shields.io/badge/Language-Lua-blue?style=flat&logo=lua&logoColor=white"></a>
+        <a href="./LICENSE"><img alt="Project's License" src="https://img.shields.io/badge/License-MIT-brightgreen"></a>
     </p>
 </p>
 
