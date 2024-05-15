@@ -1,5 +1,8 @@
 ### Lua ###
 
+# User
+.art
+
 # Compiled Lua sources
 luac.out
 
