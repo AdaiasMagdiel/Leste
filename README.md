@@ -128,6 +128,7 @@ leste [options] [folder]
 ### Options
 
 - `-d, --disable-color`: Disable color for the output, print raw text. Default is `false`.
+- `-h, --help`: Show the usage message and exit.
 - `-v, --verbose`: Display output of print function inside tests. Default is `false`.
 - `-x, --exitfirst`: Exit on the first failure. Default is `false`.
 
@@ -136,19 +137,25 @@ leste [options] [folder]
 Run tests located in the default `./tests` folder with verbose output:
 
 ```bash
-lua leste/main.lua -v
+leste -v
 ```
 
 Run tests located in a specific folder:
 
 ```bash
-lua leste/main.lua my_tests_folder
+leste my_tests_folder
 ```
 
 Stop the tests after the first failure:
 
 ```bash
-lua leste/main.lua -x
+leste -x
+```
+
+To disable colors in the output, use the `-d` or `--disable-color` flags.
+
+```bash
+leste -d
 ```
 
 ## Writing Tests
