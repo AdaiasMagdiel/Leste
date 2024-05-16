@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2024-05-16
+
+### Added
+
+- Help option to the CLI. Use `-h` or `--help` with `leste` to display the usage message.
+- Expanded Assertion Functions in the `leste.assertions.Assertions` Module:
+    - Introduced `notAssert` function to verify a condition is false.
+    - Enhanced `equal` function for clearer error messages and refined comparisons.
+    - Included `notEqual` function to assert expected and actual values as unequal.
+    - Introduced `tableHasKey` function to validate the presence of a key in a table.
+    - Added `tableNotHasKey` function to verify the absence of a key in a table.
+    - Implemented `tableContains` function to verify if a table contains a specific value.
+    - Added `tableNotContains` function to check if a table does not contain a specific value.
+- Added comprehensive tests for the `leste.assertions.Assertions` module to ensure method quality.
+
+[0.1.2]: https://github.com/AdaiasMagdiel/Leste/compare/v0.1.1...v0.1.2
+
 ## [0.1.1] - 2024-05-15
 
 This release of Leste introduces several improvements to streamline the testing experience and provide more robust testing capabilities.
