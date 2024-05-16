@@ -285,7 +285,7 @@ Leste.run = function()
         end
 
         -- exit on first error if exitOnFirst is true
-        if result == false and Leste.exitOnFirst then
+        if (result == false or #Leste.errors > 0) and Leste.exitOnFirst then
             break
         end
 
