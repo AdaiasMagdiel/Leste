@@ -7,7 +7,7 @@ local fs = {}
 -- @function fs.system
 -- @treturn string The operating system type.
 function fs.system()
-	return package.config:sub(1,1) == "\\" and "win" or "unix"
+    return package.config:sub(1,1) == "\\" and "win" or "unix"
 end
 
 --- Reads the content of a file.
@@ -16,17 +16,17 @@ end
 -- @tparam function action Optional. The function to open the file. Defaults to `io.open`.
 -- @treturn string The content of the file.
 function fs.readFile(filepath, action)
-	action = action or io.open
-	local file = action(filepath, "r")
+    action = action or io.open
+    local file = action(filepath, "r")
 
-	if file == nil then
-		error("An error occurred while trying to read file.")
-	end
+    if file == nil then
+        error("An error occurred while trying to read file.")
+    end
 
-	local content = file:read("*a")
-	file:close()
+    local content = file:read("*a")
+    file:close()
 
-	return content
+    return content
 end
 
 --- Executes a command and returns its output.
@@ -34,19 +34,19 @@ end
 -- @tparam table commands A table with "win" and "unix" keys specifying the commands to execute on each OS.
 -- @treturn string The output of the executed command.
 function fs.exec(commands)
-	local command = fs.system() == "win" and commands.win or commands.unix
+    local command = fs.system() == "win" and commands.win or commands.unix
 
-	local content = fs.readFile(command, io.popen)
-	return content
+    local content = fs.readFile(command, io.popen)
+    return content
 end
 
 --- Returns the file separator character based on the operating system.
 -- @function fs.sep
 -- @treturn string The file separator character.
 function fs.sep()
-	local sep = fs.system() == "win" and "\\" or "/"
+    local sep = fs.system() == "win" and "\\" or "/"
 
-	return sep
+    return sep
 end
 
 
@@ -54,22 +54,22 @@ end
 -- @function fs.null
 -- @treturn string The null device location.
 function fs.null()
-        local device = fs.system() == "win" and "NUL" or "/dev/null"
+    local device = fs.system() == "win" and "NUL" or "/dev/null"
 
-        return device
+    return device
 end
 
 --- Gets the current working directory.
 -- @function fs.path
 -- @treturn string The current working directory.
 function fs.path()
-	local content = fs.exec({
-		win="cd",
-		unix="pwd"
-	})
+    local content = fs.exec({
+        win="cd",
+        unix="pwd"
+    })
 
-	content = content:gsub("\n", "")
-	return content
+    content = content:gsub("\n", "")
+    return content
 end
 
 --- Lists the contents of a directory.
@@ -77,26 +77,66 @@ end
 -- @tparam string path Optional. The path to the directory. Defaults to the current working directory.
 -- @treturn table A table of filenames in the directory.
 function fs.listDir(path)
-	path = path or fs.path()
+    path = path or fs.path()
 
-	local content = fs.exec({
-		win=('dir /b "%s"'):format(path),
-		unix=('ls -a "%s"'):format(path)
-	})
+    local content = fs.exec({
+        win=('dir /b "%s"'):format(path),
+        unix=('ls -a "%s"'):format(path)
+    })
 
-	local files = {}
+    local files = {}
 
-	for str in content:gmatch("([^\n]+)") do
-		-- function to trim string
-		-- ref: https://www.lua.org/pil/20.3.html
-		local file = (str:gsub("^%s*(.-)%s*$", "%1"))
+    for str in content:gmatch("([^\n]+)") do
+        -- function to trim string
+        -- ref: https://www.lua.org/pil/20.3.html
+        local file = (str:gsub("^%s*(.-)%s*$", "%1"))
 
-		if file ~= "." and file ~= ".." then
-			files[#files+1] = file
-		end
-	end
+        if file ~= "." and file ~= ".." then
+            files[#files+1] = file
+        end
+    end
 
-	return files
+    return files
+end
+
+function fs.isFile(path)
+    local content = fs.exec({
+        win=('dir /b "%s"'):format(path),
+        unix=('ls -a "%s"'):format(path)
+    })
+    local file = (content:gsub("^%s*(.-)%s*$", "%1"))
+
+    return file == fs.filename(path)
+end
+
+function fs.isDir(path)
+    local content = fs.exec({
+        win=('dir "%s"'):format(path),
+        unix=('ls -la "%s"'):format(path)
+    })
+    local system = fs.system()
+
+    if system == "unix" then
+        local _, count = content:gsub("total +%d", "")
+        return count > 0
+    else
+        local _, count = content:gsub("<DIR>", "")
+        return count > 0
+    end
+end
+
+function fs.exists(path)
+    return fs.isFile(path) or fs.isDir(path)
+end
+
+function fs.filename(path)
+    local parts = {}
+    path = path:gsub("\\", "/")
+    for part in path:gmatch("([^/]+)") do
+        parts[#parts+1] = part
+    end
+
+    return parts[#parts]
 end
 
 return fs
