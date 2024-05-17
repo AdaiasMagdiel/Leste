@@ -35,10 +35,7 @@ Examples:
 ]]):format(LesteCLI.program)
 
 local function loadFile(file, prefix)
-	-- print('>', file, fs.filename(file))
-
 	if fs.filename(file):sub(1, #prefix) == prefix then
-		-- print('>>')
 		-- save the actual file name to use when `Leste.it` will be triggered.
 		Leste.actualFile = file
 		dofile(file)
@@ -87,7 +84,7 @@ LesteCLI.main = function()
 		local loaded = 0
 
 		for _, argument in ipairs(cli.args) do
-			if not fs.exists(fs.path() .. fs.sep() .. argument) then
+			if not fs.exists(argument) then
 				print("Warning: '"..argument.."' is not found.")
 			else
 				if fs.isFile(argument) then
