@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## Added
+
+- Introduced the ability to execute multiple files, directories, or combinations thereof using `leste`.
+  - Updated syntax from `leste [options] [folder]` to `leste [options] [file/folder...]`, allowing for flexible execution of multiple targets.
+
 ### Changes
 
 - Rewrite of `leste.utils.cli`: Improves code readability, maintainability, and optimizes argument parsing and flag extraction for better performance.
