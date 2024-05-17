@@ -1,77 +1,98 @@
---- The `cli` module provides functions for parsing command-line arguments.
+--- Module leste.utils.cli for parsing command line arguments
 -- @module leste.utils.cli
 
-local cli = {}
+---
+-- @field raw {string, ...} The original command line arguments passed to the script.
+-- @field args {string, ...} Processed arguments after filtering out flags.
+-- @field flags table A table of nested tables of strings containing short (-) and long (--flags) flags extracted from the command line arguments.
+-- @table cli
+local cli = {
+	raw    = arg,
+	args   = {},
+	flags  = {
+		short = {},
+		long  = {}
+	}
+}
 
---- Removes flags (arguments starting with "-") from the given table of arguments.
--- @tparam table args The table of arguments to process.
--- @treturn table A new table containing only non-flag arguments, can be assigned to the global `arg` table.
-cli.removeFlags = function(args)
-	local items = {}
+--- Checks if a string starts with another string.
+-- @function startsWith
+-- @tparam string str The string to check.
+-- @tparam string value The substring to find at the beginning of `str`.
+-- @treturn boolean True if `str` starts with `value`, otherwise false.
+local function startsWith(str, value)
+	return str:sub(1, #value) == value
+end
 
-	for _, option in ipairs(args) do
-		if option:sub(1, 1) ~= "-" then
-			items[#items+1] = option
+--- Determines if a table contains a specific value.
+-- @function tableContains
+-- @tparam table tbl The table to search within.
+-- @tparam string value The value to search for in `tbl`.
+-- @treturn boolean True if `tbl` contains `value`, otherwise false.
+local function tableContains(tbl, value)
+	for _, v in pairs(tbl) do
+		if v == value then
+			return true
 		end
 	end
 
-	return items
+	return false
 end
 
---- Parses command-line arguments and returns a table containing parsed flags.
--- @tparam boolean removeFromArg If true, removes parsed flags from the global `arg` table. Defaults to false.
--- @treturn table A table containing parsed flags:<br>
--- `verbose` (boolean): True if the `--verbose` or `-v` flag is present.<br>
--- `exitOnFirst` (boolean): True if the `--exitfirst` or `-x` flag is present.
-cli.getFlags = function(removeFromArg)
-	local flags = {
-		disableColor = false,
-		help = false,
-		verbose = false,
-		exitOnFirst = false,
-	}
+--- Removes out flags from the raw command line arguments and stores arguments in `args`.
+-- @function fillArgs
+cli.fillArgs = function()
+	local args = {}
 
-	for _, flag in ipairs(arg) do
-		-- verify if argument starts with --
-		if flag:sub(1, 2) == "--" then
-			-- compare the option or get the current state, if don't match
-			-- but flag is already true then don't change to false
-			local option = flag:sub(3)
-			flags.disableColor  = option == "disable-color"  or flags.disableColor
-			flags.help          = option == "help"           or flags.help
-			flags.verbose       = option == "verbose"        or flags.verbose
-      		flags.exitOnFirst   = option == "exitfirst"      or flags.exitOnFirst
+	for _, v in pairs(cli.raw) do
+		if _ > 0 and not startsWith(v, "-") then
+			args[#args+1] = v
+		end
+	end
 
-		-- short option, single -
-		elseif flag:sub(1, 1) == "-" then
-			-- get the option without -
-			local option = flag:sub(2)
+	cli.args = args
+end
 
-			-- iters over each char of option and compare
-			local i = 1
-			while i <= #option do
-				local c = option:sub(i, i)
+--- Extracts both short and long flags from the raw command line arguments and categorizes them accordingly.
+-- @function extractFlags
+cli.extractFlags = function()
+	for _, argument in pairs(cli.raw) do
+		if startsWith(argument, "--") then
+			local flag = argument:sub(3)
 
-				if     c == "d" then
-					flags.disableColor = true
-				elseif c == "h" then
-					flags.help = true
-				elseif c == "v" then
-					flags.verbose = true
-				elseif c == "x" then
-					flags.exitOnFirst = true
+			if not tableContains(cli.flags.long, flag) then
+				cli.flags.long[#cli.flags.long+1] = flag
+			end
+		elseif startsWith(argument, "-") then
+			local flag = argument:sub(2)
+
+			for char in flag:gmatch(".") do
+				if not tableContains(cli.flags.short, char) then
+					cli.flags.short[#cli.flags.short+1] = char
 				end
-
-				i = i + 1
 			end
 		end
 	end
 
-	if removeFromArg then
-		arg = cli.removeFlags(arg)
-	end
+	cli.fillArgs()
+end
 
-	return flags
+--- Checks if a given short or long flag exists among the parsed flags.
+-- @function getFlag
+-- @tparam string? short The short flag to check, optional.
+-- @tparam string? long The long flag to check, optional.
+-- @treturn boolean True if either the short or long flag exists, otherwise false.
+cli.getFlag = function(short, long)
+	local inLong = tableContains(cli.flags.long, (long or ""):gsub("^-+", ""))
+	local inShort = tableContains(cli.flags.short, (short or ""):gsub("^-+", ""))
+
+	return (inLong or inShort)
+end
+
+--- Parses command line arguments by extracting flags and processing arguments.
+-- @function parse
+cli.parse = function()
+	cli.extractFlags()
 end
 
 return cli
