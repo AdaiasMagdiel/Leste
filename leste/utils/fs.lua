@@ -100,29 +100,37 @@ function fs.listDir(path)
 end
 
 function fs.isFile(path)
+    if fs.system() == "unix" then
+        path = path:gsub('\\', '/')
+    else
+        path = path:gsub('/', '\\')
+    end
+
     local content = fs.exec({
         win=('dir /b "%s"'):format(path),
         unix=('ls -a "%s"'):format(path)
     })
+
     local file = (content:gsub("^%s*(.-)%s*$", "%1"))
 
     return file == fs.filename(path)
 end
 
 function fs.isDir(path)
+    if fs.system() == "unix" then
+        path = path:gsub('\\', '/')
+    else
+        path = path:gsub('/', '\\')
+    end
+
     local content = fs.exec({
         win=('dir "%s"'):format(path),
         unix=('ls -la "%s"'):format(path)
     })
-    local system = fs.system()
 
-    if system == "unix" then
-        local _, count = content:gsub("total +%d", "")
-        return count > 0
-    else
-        local _, count = content:gsub("<DIR>", "")
-        return count > 0
-    end
+    local pattern = fs.system() == "unix" and "total +%d" or "<DIR>"
+    local _, count = content:gsub(pattern, "")
+    return count > 0
 end
 
 function fs.exists(path)
