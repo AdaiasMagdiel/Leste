@@ -87,7 +87,7 @@ LesteCLI.main = function()
 		local loaded = 0
 
 		for _, argument in ipairs(cli.args) do
-			if not fs.exists(argument) then
+			if not fs.exists(fs.path() .. fs.sep() .. argument) then
 				print("Warning: '"..argument.."' is not found.")
 			else
 				if fs.isFile(argument) then
