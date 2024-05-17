@@ -1,15 +1,27 @@
-# TODO
+# Project Ideas and Tasks
 
-There are some ideas to add to the project. You can add a new idea or work
-on an idea from here.
+This document outlines potential additions and improvements to the project. Feel free to contribute by adding a new idea or tackling existing ones listed below.
 
 ### leste/main.lua
 
-- Add option to run a specific file (or files).
-  - Maybe the [folder] argument can be [folder/file] (or [folder/files...]).
-  - It's necessary to work in a way to verify if the argument is a folder or file, write a new method in leste.utils.fs.
+- **Improve Documentation**: Enhance the usage instructions and incorporate detailed code documentation.
+  
+### README.md
 
+- **Expand Use Case Coverage**: Document new functionalities introduced in `leste/main.lua` to provide comprehensive guidance for users.
 
 ### leste/assertions.lua
 
-- Add more assertions methods to this module.
+- **Extend Assertion Methods**: Develop additional assertion methods to enrich the testing capabilities of this module.
+
+### leste/utils/fs.lua
+
+- **Add Comprehensive Documentation**: Ensure thorough documentation covering all aspects of the filesystem utility module.
+
+### GitHub Actions Integration
+
+- **Automate Testing**: Implement GitHub Actions workflows to automate testing of Leste, ensuring continuous quality assurance.
+
+---
+
+Contributions to these areas will significantly enhance the project's functionality, usability, and maintainability. Please feel free to select an item from this list and start contributing!
