@@ -29,25 +29,26 @@ Options:
 --- Main function to run the Leste testing framework via CLI.
 -- @function LesteCLI.main
 LesteCLI.main = function()
-	local flags = cli.getFlags(true)
+	cli.parse()
+
 	local testsFolder = "tests"
 	local filePrefix = "test"
 
 	-- update the Leste configs
-	Leste.disableColor 	= flags.disableColor
-	Leste.verbose 		= flags.verbose
-	Leste.exitOnFirst 	= flags.exitOnFirst
+	Leste.disableColor 	= cli.getFlag('-d', "--disable-color")
+	Leste.verbose 		= cli.getFlag('-v', "--verbose")
+	Leste.exitOnFirst 	= cli.getFlag('-x', "--exitfirst")
 
 	-- help mode
-	if flags.help then
+	if cli.getFlag('-h', "--help") then
 		print(LesteCLI.usage)
 		os.exit(0)
 	end
 
 	-- get the tests folder or print the usage
-	if #arg == 1 then
-		testsFolder = arg[1]
-	elseif #arg > 1 then
+	if #cli.args == 1 then
+		testsFolder = cli.args[1]
+	elseif #cli.args > 1 then
 		print(LesteCLI.usage)
 	end
 
