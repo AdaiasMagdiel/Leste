@@ -16,7 +16,7 @@ LesteCLI.usage = ([[
 Usage: %s [options] [file/folder...]
 
 Arguments:
-	file                   File (or files) with tests to run.
+	file                   File (or files) with tests to run
     folder                 Folder (or folders) to find tests, default is "./tests"
 
 Options:
