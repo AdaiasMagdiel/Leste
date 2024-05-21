@@ -118,12 +118,13 @@ Leste provide a CLI interface for running tests using the testing framework.
 ### Command Syntax
 
 ```bash
-leste [options] [folder]
+leste [options] [file/folder...]
 ```
 
 ### Arguments
 
-- `folder`: (optional) Folder to find tests. Default is `./tests`.
+- `file`: File (or files) with tests to run.
+- `folder`: Folder (or folders) to find tests, default is `./tests`.
 
 ### Options
 
@@ -192,6 +193,9 @@ Leste.it("You can add print statements if you need to debug, but remember to use
     assert(true)
 end)
 ```
+
+> [!TIP]
+> Utilizing Lua's `assert` function is an effective method for asserting your tests. For more detailed output, consider utilizing the `leste.assertions` module. This module offers a range of assert functions that are adept at handling errors more efficiently.
 
 ### 4. Run Tests
 
