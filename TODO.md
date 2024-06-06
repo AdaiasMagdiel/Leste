@@ -9,10 +9,16 @@ This document outlines potential additions and improvements to the project. Feel
 ### README.md
 
 - **Expand Use Case Coverage**: Document new functionalities introduced in `leste/main.lua` to provide comprehensive guidance for users.
+	- Leste.beforeAll
+	- Leste.beforeEach
+	- Leste.afterAll
+	- Leste.afterEach
+	- Assertions module
 
 ### leste/assertions.lua
 
 - **Extend Assertion Methods**: Develop additional assertion methods to enrich the testing capabilities of this module.
+	- Assertions.strContains(haystack, needle): Verify if a string contains a value.
 
 ### leste/utils/fs.lua
 
